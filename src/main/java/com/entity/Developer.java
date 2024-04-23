@@ -4,7 +4,6 @@ public class Developer {
 
 	private String name;
 	private int id;
-	private int userId;
 
 	public String getName() {
 		return name;
@@ -22,18 +21,15 @@ public class Developer {
 		this.id = id;
 	}
 
-	public int getUserId() {
-		return userId;
-	}
-
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
-
-	public Developer(String name, int userId) {
+	
+	public Developer(String name) {
 		super();
 		this.name = name;
-		this.userId = userId;
+	}
+	
+	public Developer(String name, int id) {
+		super();
+		this.name = name;
 	}
 	
 

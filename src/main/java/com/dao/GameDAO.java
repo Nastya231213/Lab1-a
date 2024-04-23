@@ -159,9 +159,7 @@ public class GameDAO {
 			listOfGames.add(game);
 			i++;
 		}
-
 		return listOfGames;
-
 	}
 
 	public List<Game> getGamesBySearch(String keyword, int category_id, int platform_id, int minPrice, int maxPrice) {
@@ -484,7 +482,30 @@ public class GameDAO {
 
 		return game;
 	}
-	
+	 public Game getLastGame() {
+	        Game game = null;
+	        try {
+	            String sql = "SELECT * FROM games ORDER BY game_id DESC LIMIT 1";
+	            PreparedStatement pst = conn.prepareStatement(sql);
+
+	            ResultSet rs = pst.executeQuery();
+	            if (rs.next()) {
+	                game = new Game();
+	                game.setId(rs.getInt(1));
+	                game.setTitle(rs.getString(2));
+	                game.setDescription(rs.getString(3));
+	                game.setPrice(rs.getDouble(4));
+	                game.setPlatform_id(rs.getInt(5));
+	                game.setPhotoName(rs.getString(6));
+	                game.setGenre_id(rs.getInt(7));
+	                game.setYear(rs.getString(8));
+	                game.setDeveloper(rs.getString(9));
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return game;
+	    }
 	public void closeConnection() {
 		try {
 			this.conn.close();
