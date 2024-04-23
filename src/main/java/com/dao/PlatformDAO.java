@@ -79,6 +79,26 @@ ResultSet rs;
 		
 		return platform;
 	}
+	public Platform getLastPlatform() {
+	    Platform platform = null;
+	    
+	    try {
+	        String sql = "SELECT * FROM platforms ORDER BY id DESC LIMIT 1";
+	        pst = conn.prepareStatement(sql);
+	        rs = pst.executeQuery();
+	        
+	        if (rs.next()) {
+	            platform = new Platform();
+	            platform.setId(rs.getInt(1));
+	            platform.setName(rs.getString(2));
+	        }
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return platform;
+	}
 	
 	public boolean deletePlatform(int id) {
 		boolean flag=false;

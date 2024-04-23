@@ -62,7 +62,7 @@ public class UserSignUpServlet extends HttpServlet {
 		} else {
 			if (check != null) {
 				if (password.equals(confirmPassoword)) {
-					if (dao.insetNewUser(u)) {
+					if (dao.insertNewUser(u)) {
                          
 				        response.sendRedirect("verify.jsp");
 				        

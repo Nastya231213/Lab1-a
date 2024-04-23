@@ -16,7 +16,6 @@ import org.junit.Test;
 import com.DB.DBConnect;
 import com.dao.GenreDAO;
 import com.entity.Genre;
-import com.entity.User;
 
 
 public class GenreDAOTest {
@@ -54,7 +53,7 @@ public class GenreDAOTest {
 	        assertFalse(genres.isEmpty(), "List of genres should not be empty");
 	    }
 	  @Test
-		public void testDeleteUser() {
+		public void testDeleteGenre() {
 
 		   Genre lastGenre = genreDAO.getLastGenre();
 
