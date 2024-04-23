@@ -99,6 +99,22 @@ public class GenreDAO {
 		}
 		return genre;
 	}
+	public Genre getLastGenre() {
+	    Genre genre = null;
+	    try {
+	        String sql = "SELECT * FROM genre ORDER BY genre_id DESC LIMIT 1";
+	        pst = conn.prepareStatement(sql);
+	        rs = pst.executeQuery();
+	        if (rs.next()) {
+	            genre = new Genre();
+	            genre.setId(rs.getInt("genre_id"));
+	            genre.setName(rs.getString("name"));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return genre;
+	}
 	public boolean deleteGenre(int id){
 		boolean flag=false;
 		try {

@@ -20,7 +20,7 @@ public class UserDAO {
 		this.conn = conn;
 	}
 
-	public boolean insetNewUser(User u) {
+	public boolean insertNewUser(User u) {
 		boolean flag = false;
 
 		try {
@@ -128,21 +128,27 @@ public class UserDAO {
 	}
 
 	public User getLastUser() {
-		User user = null;
-		try {
-			String sql = "select * from user order by user_id DESC";
-			pst = conn.prepareStatement(sql);
-			rs = pst.executeQuery();
-			if (rs.next()) {
-				user = new User();
-				user.setUser_id(rs.getInt(1));
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return user;
+	    User user = null;
+	    try {
+	        String sql = "SELECT * FROM user ORDER BY user_id DESC LIMIT 1";
+	        pst = conn.prepareStatement(sql);
+	        rs = pst.executeQuery();
+	        if (rs.next()) {
+	            user = new User();
+	            user.setUser_id(rs.getInt("user_id"));
+	            user.setUsername(rs.getString("username"));
+	            user.setEmail(rs.getString("email"));
+	            user.setPassword(rs.getString("password"));
+	            user.setFullName(rs.getString("full_name"));
+	            user.setPhone_number(rs.getString("phone_number"));
+	            user.setAddress(rs.getString("address"));
+	            user.setRegistration_date(rs.getString("registration_date"));
+	            user.setHash(rs.getString("hash"));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return user;
 	}
 
 	public User getUserById(int userId) {
