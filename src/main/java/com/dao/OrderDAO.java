@@ -127,8 +127,7 @@ public class OrderDAO {
 		        order.setCity(rs.getString(7));
 		        order.setDate(rs.getString(8));
 		        order.setState(rs.getString(9));
-		        order.setUserId(rs.getInt(10));
-		        order.setStatus(rs.getString(11));
+		        order.setStatus(rs.getString(10));
 
 
 			}
@@ -237,6 +236,32 @@ public class OrderDAO {
 		return orderList;
 		
 	}
+	
+	public Order getLastOrder() {
+	    Order order = null;
+	    try {
+	        String sql = "SELECT * FROM orderofuser ORDER BY order_id DESC LIMIT 1";
+	        pst = conn.prepareStatement(sql);
+	        rs = pst.executeQuery();
+	        if (rs.next()) {
+	            order = new Order();
+	            order.setOrderId(rs.getInt(1));
+	            order.setEmail(rs.getString(2));
+	            order.setAddress(rs.getString(3));
+	            order.setPrice(rs.getDouble(4));
+	            order.setPhone(rs.getString(5));
+	            order.setFullName(rs.getString(6));
+	            order.setCity(rs.getString(7));
+	            order.setDate(rs.getString(8));
+	            order.setState(rs.getString(9));
+	            order.setStatus(rs.getString(10));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return order;
+	}
+
 	public boolean EditOrder(Order order) {
 		boolean flag=false;
 		

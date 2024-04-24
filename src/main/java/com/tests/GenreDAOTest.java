@@ -1,6 +1,5 @@
 package com.tests;
 
-
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -16,7 +15,6 @@ import org.junit.Test;
 import com.DB.DBConnect;
 import com.dao.GenreDAO;
 import com.entity.Genre;
-
 
 public class GenreDAOTest {
 	private Connection conn;
@@ -36,31 +34,33 @@ public class GenreDAOTest {
 			conn.close();
 		}
 	}
+
 	@Test
-    public void testInsertGenre() {
-        // Insert a new genre
-        boolean result = genreDAO.insertGenre("New Genre");
-        assertTrue(result, "Genre insertion should return true");
+	public void testInsertGenre() {
+		// Insert a new genre
+		boolean result = genreDAO.insertGenre("New Genre");
+		assertTrue(result, "Genre insertion should return true");
 
-        assertNotNull(genreDAO.getLastGenre(), "Genre 'New Genre' should exist in the database");
-    }
-	
-	  @Test
-	   public void testGetAllGenre() {
-	        List<Genre> genres = genreDAO.getAllGenre();
+		assertNotNull(genreDAO.getLastGenre(), "Genre 'New Genre' should exist in the database");
+	}
 
-	        assertNotNull(genres, "List of genres should not be null");
-	        assertFalse(genres.isEmpty(), "List of genres should not be empty");
-	    }
-	  @Test
-		public void testDeleteGenre() {
+	@Test
+	public void testGetAllGenre() {
+		List<Genre> genres = genreDAO.getAllGenre();
 
-		   Genre lastGenre = genreDAO.getLastGenre();
+		assertNotNull(genres, "List of genres should not be null");
+		assertFalse(genres.isEmpty(), "List of genres should not be empty");
+	}
 
-		    int lastGenreId =lastGenre.getId();
-            
-		    assertTrue(genreDAO.deleteGenre(lastGenreId));
+	@Test
+	public void testDeleteGenre() {
 
-		    assertNull(genreDAO.getGenreById(lastGenreId));
-		}
+		Genre lastGenre = genreDAO.getLastGenre();
+
+		int lastGenreId = lastGenre.getId();
+
+		assertTrue(genreDAO.deleteGenre(lastGenreId));
+
+		assertNull(genreDAO.getGenreById(lastGenreId));
+	}
 }
