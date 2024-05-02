@@ -128,27 +128,27 @@ public class UserDAO {
 	}
 
 	public User getLastUser() {
-	    User user = null;
-	    try {
-	        String sql = "SELECT * FROM user ORDER BY user_id DESC LIMIT 1";
-	        pst = conn.prepareStatement(sql);
-	        rs = pst.executeQuery();
-	        if (rs.next()) {
-	            user = new User();
-	            user.setUser_id(rs.getInt("user_id"));
-	            user.setUsername(rs.getString("username"));
-	            user.setEmail(rs.getString("email"));
-	            user.setPassword(rs.getString("password"));
-	            user.setFullName(rs.getString("full_name"));
-	            user.setPhone_number(rs.getString("phone_number"));
-	            user.setAddress(rs.getString("address"));
-	            user.setRegistration_date(rs.getString("registration_date"));
-	            user.setHash(rs.getString("hash"));
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	    return user;
+		User user = null;
+		try {
+			String sql = "SELECT * FROM user ORDER BY user_id DESC LIMIT 1";
+			pst = conn.prepareStatement(sql);
+			rs = pst.executeQuery();
+			if (rs.next()) {
+				user = new User();
+				user.setUser_id(rs.getInt("user_id"));
+				user.setUsername(rs.getString("username"));
+				user.setEmail(rs.getString("email"));
+				user.setPassword(rs.getString("password"));
+				user.setFullName(rs.getString("full_name"));
+				user.setPhone_number(rs.getString("phone_number"));
+				user.setAddress(rs.getString("address"));
+				user.setRegistration_date(rs.getString("registration_date"));
+				user.setHash(rs.getString("hash"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return user;
 	}
 
 	public User getUserById(int userId) {
@@ -206,18 +206,18 @@ public class UserDAO {
 			String sql = "delete from user where user_id=?";
 			pst = conn.prepareStatement(sql);
 			pst.setInt(1, userId);
-			
-			int i=pst.executeUpdate();
-			if(i==1) {
-				flag=true;
+
+			int i = pst.executeUpdate();
+			if (i == 1) {
+				flag = true;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return flag;
-		
+
 	}
-	
+
 	public void closeConnection() {
 		try {
 			this.conn.close();
@@ -226,29 +226,28 @@ public class UserDAO {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public boolean updateUserInProfile(User user) {
-		boolean flag=false;
+		boolean flag = false;
 		try {
-			String sql="update user set username=?, email=?,password=?,full_name=?, phone_number=?,address=? where user_id=?";
-			pst=conn.prepareStatement(sql);
+			String sql = "update user set username=?, email=?,password=?,full_name=?, phone_number=?,address=? where user_id=?";
+			pst = conn.prepareStatement(sql);
 			pst.setString(1, user.getUsername());
 			pst.setString(2, user.getEmail());
 			pst.setString(3, user.getPassword());
 			pst.setString(4, user.getFullName());
 			pst.setString(5, user.getPhone_number());
 			pst.setString(6, user.getAddress());
-			pst.setInt(7,user.getUser_id());
-			int i=pst.executeUpdate();
-			if(i==1) {
-				flag=true;
+			pst.setInt(7, user.getUser_id());
+			int i = pst.executeUpdate();
+			if (i == 1) {
+				flag = true;
 			}
-		}catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return flag;
-		
-	}
 
+	}
 
 }
