@@ -19,7 +19,7 @@ public class AdminEditUserServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
           int userId=Integer.parseInt(request.getParameter("id"));
           UserDAO userDAO=new UserDAO(DBConnect.getConn());
-	      User user=userDAO.getUserById(userId);
+	      User user=userDAO.getById(userId);
 	      String username=request.getParameter("username");
 	      String email=request.getParameter("email");
 	      String fullName=request.getParameter("fname");
@@ -30,7 +30,7 @@ public class AdminEditUserServlet extends HttpServlet {
 	      user.setFullName(fullName);
 	      user.setPhone_number(phone);
 	      user.setAddress(address);
-	      boolean flag=userDAO.updateUser(user);
+	      boolean flag=userDAO.update(user);
 	      HttpSession session =request.getSession();
 	      if(flag) {
 	    	  session.setAttribute("succMsg", "Successfully updated!");

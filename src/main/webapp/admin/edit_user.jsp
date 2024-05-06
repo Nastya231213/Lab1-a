@@ -25,7 +25,7 @@ label {
 <body style="background-color: #EEEEEE;">
 <% int userId=Integer.parseInt(request.getParameter("id"));
 UserDAO userDAO=new UserDAO(DBConnect.getConn());
-User user=userDAO.getUserById(userId);
+User user=userDAO.getById(userId);
 %>
 	<%@include file="header.jsp"%>
 	<div class="container p-4">

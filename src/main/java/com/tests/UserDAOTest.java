@@ -35,9 +35,9 @@ public class UserDAOTest {
 	
 	@Test
 	public void testInsertNewUser() {
-		User user = new User("username", "email@example.com", "password", "Full Name", "1234567890", "Address",
+		User user = new User("username1", "email@example.com", "password", "Full Name", "1234567890", "Address",
 				"2022-04-21");
-		userDAO.insertNewUser(user);
+		userDAO.insert(user);
 		assertNotNull(userDAO.getLastUser());
 	}
 
@@ -49,7 +49,7 @@ public class UserDAOTest {
 
 	@Test
 	public void testUserLogin() {
-		assertNotNull(userDAO.isExistAccount("email@example.com", "password"));
+		assertNotNull(userDAO.isExistAccount("email2@example.com", "password"));
 
 		assertNull(userDAO.isExistAccount("nonexistent@example.com", "incorrectpassword"));
 	}
@@ -65,7 +65,7 @@ public class UserDAOTest {
 		User userToUpdate = userDAO.getLastUser();
 		userToUpdate.setUsername("newUsername");
 	
-		userDAO.updateUser(userToUpdate);
+		userDAO.update(userToUpdate);
 		User updatedLastUser= userDAO.getLastUser();
 
 	    assertEquals("newUsername", updatedLastUser.getUsername());
@@ -79,8 +79,8 @@ public class UserDAOTest {
 
 	    int lastUserId = lastUser.getUser_id();
 
-	    assertTrue(userDAO.deleteUser(lastUserId));
+	    assertTrue(userDAO.delete(lastUserId));
 
-	    assertNull(userDAO.getUserById(lastUserId));
+	    assertNull(userDAO.getById(lastUserId));
 	}
 }

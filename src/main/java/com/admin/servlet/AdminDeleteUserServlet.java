@@ -32,7 +32,7 @@ public class AdminDeleteUserServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int userId=Integer.parseInt(request.getParameter("id"));
 		UserDAO userDAO	=new UserDAO(DBConnect.getConn());
-		boolean flag=userDAO.deleteUser(userId);
+		boolean flag=userDAO.delete(userId);
 		HttpSession session=request.getSession();
 		
 	      if(flag) {

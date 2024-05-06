@@ -123,7 +123,7 @@ a.active {
 								</c:forTokens></td>
 						</tr>
 						<%
-						User u = userDAO.getUserById(rev.getUser_id());
+						User u = userDAO.getById(rev.getUser_id());
 						%>
 						<tr>
 							<td><p>
