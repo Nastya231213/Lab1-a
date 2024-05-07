@@ -20,7 +20,7 @@ public class AdminDeletePlatformServlet extends HttpServlet {
 		int platformId=Integer.parseInt(request.getParameter("id"));
 
 		PlatformDAO platformDAO=new PlatformDAO(DBConnect.getConn());
-		boolean flag=platformDAO.deletePlatform(platformId);
+		boolean flag=platformDAO.delete(platformId);
 		HttpSession session=request.getSession();
 	      if(flag) {
 	    	  session.setAttribute("succMsg", "Successfully deleted!");

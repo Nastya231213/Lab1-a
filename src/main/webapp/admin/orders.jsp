@@ -62,7 +62,7 @@ tr {
 		</thead>
 		<%
 		OrderDAO orderDAO = new OrderDAO(DBConnect.getConn());
-		List<Order> listOrders = orderDAO.getAllOrders();
+		List<Order> listOrders = orderDAO.getAll();
 
 		for (Order order : listOrders) {
 		%>

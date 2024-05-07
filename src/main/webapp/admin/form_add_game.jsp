@@ -67,9 +67,9 @@ label {
 							</div>
 							<%
 							PlatformDAO daoPl = new PlatformDAO(DBConnect.getConn());
-							List<Platform> listPlatform = daoPl.getAllPlatforms();
+							List<Platform> listPlatform = daoPl.getAll();
 							GenreDAO daoGenre = new GenreDAO(DBConnect.getConn());
-							List<Genre> listGenre = daoGenre.getAllGenre();
+							List<Genre> listGenre = daoGenre.getAll();
 							%>
 
 							<div class="form-group">

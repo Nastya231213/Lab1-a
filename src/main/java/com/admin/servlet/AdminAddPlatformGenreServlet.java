@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import com.DB.DBConnect;
 import com.dao.PlatformDAO;
+import com.entity.Platform;
 
 /**
  * Servlet implementation class AdminAddPlatformGenreServlet
@@ -21,7 +22,8 @@ public class AdminAddPlatformGenreServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String name=request.getParameter("platform");
 		PlatformDAO dao=new PlatformDAO(DBConnect.getConn());
-		boolean flag=dao.insertPlatform(name);
+		Platform platform=new Platform(name);
+		boolean flag=dao.insert(platform);
 		HttpSession session=request.getSession();
 		if(flag) {
 			session.setAttribute("succMsg","The platform has been added successfully");

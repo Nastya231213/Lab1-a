@@ -30,7 +30,7 @@ label {
 	<%
 	int orderId = Integer.parseInt(request.getParameter("id"));
 	OrderDAO orderDAO = new OrderDAO(DBConnect.getConn());
-	Order order = orderDAO.getOrderById(orderId);
+	Order order = orderDAO.getById(orderId);
 	%>
 
 	<div class="col-md-6 offset-md-3">

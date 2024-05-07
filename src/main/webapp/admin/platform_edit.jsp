@@ -37,7 +37,7 @@ tr {
 	<br>
 	<%
 	PlatformDAO platformDAO = new PlatformDAO(DBConnect.getConn());
-	List<Platform> listOfPlatforms = platformDAO.getAllPlatforms();
+	List<Platform> listOfPlatforms = platformDAO.getAll();
 	%><div class="col-md-6 offset-md-3 shadow" style="background-color:white;">
 		<h2 style="font-family: 'Thelma', sans-serif;" class="text-center">Platforms</h2>
 		<c:if test="${not empty succMsg}">

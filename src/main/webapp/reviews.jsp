@@ -59,7 +59,7 @@ a.active {
 	<%
 	int gid = Integer.parseInt(request.getParameter("id"));
 	GameDAO daoGame = new GameDAO(DBConnect.getConn());
-	Game g = daoGame.getGameById(gid);
+	Game g = daoGame.getById(gid);
 	GenreDAO genreDAO = new GenreDAO(DBConnect.getConn());
 	UserDAO userDAO = new UserDAO(DBConnect.getConn());
 	PlatformDAO platformDAO = new PlatformDAO(DBConnect.getConn());
@@ -70,9 +70,9 @@ a.active {
 			<div class="col-md-12 border bg-white rounded">
 				<div class="row">
 					<a href=""><i class="fas fa-home ml-3"></i>/</a><a
-						href="view_games.jsp?genre=<%=g.getGenre_id()%>"><%=genreDAO.getGenreById(g.getGenre_id()).getName()%>/</a>
+						href="view_games.jsp?genre=<%=g.getGenre_id()%>"><%=genreDAO.getById(g.getGenre_id()).getName()%>/</a>
 					<a
-						href="view_by_platform?genre=<%=g.getGenre_id()%>&&pl=<%=g.getPlatform_id()%>"><%=platformDAO.getPlatformById(g.getPlatform_id()).getName()%>/</a><a
+						href="view_by_platform?genre=<%=g.getGenre_id()%>&&pl=<%=g.getPlatform_id()%>"><%=platformDAO.getById(g.getPlatform_id()).getName()%>/</a><a
 						href=""><%=g.getDeveloper()%></a>
 				</div>
 				<ul class="ml-3">

@@ -55,7 +55,7 @@ tr {
 		</thead>
 		<%
 		UserDAO dao = new UserDAO(DBConnect.getConn());
-		List<User> listUsers = dao.getAllUsers();
+		List<User> listUsers = dao.getAll();
 		for (User user : listUsers) {
 		%>
 		<tr><td><%=user.getUser_id() %></td>

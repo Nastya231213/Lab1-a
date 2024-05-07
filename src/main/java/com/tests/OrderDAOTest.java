@@ -39,21 +39,21 @@ public class OrderDAOTest {
 	public void testInsertNewOrder() {
 		Order order = new Order("test@email.com", "123 Test St", "John Doe", "Test City", 100.00, "1234567890",
 				"2024-04-24", "Test State", 1);
-		assertTrue(orderDAO.insertNewOrder(order));
+		assertTrue(orderDAO.insert(order));
 	}
 
     @Test
     public void testGetOrderById() {
         Order order = orderDAO.getLastOrder();
-        Order receivedOrder=orderDAO.getOrderById(order.getOrderId());
+        Order receivedOrder=orderDAO.getById(order.getOrderId());
         assertNotNull(receivedOrder);
         assertEquals(order.getOrderId(), receivedOrder.getOrderId());
     }
     @Test
     public void testDeleteOrder() {
         Order order = orderDAO.getLastOrder();
-        orderDAO.deleteOrder(order.getOrderId());
-        assertNull(orderDAO.getOrderById(order.getOrderId()));
+        orderDAO.delete(order.getOrderId());
+        assertNull(orderDAO.getById(order.getOrderId()));
 
     }
     @Test
@@ -65,9 +65,9 @@ public class OrderDAOTest {
         retrievedOrder.setCity("New City");
         retrievedOrder.setState("New State");
 
-        assertTrue(orderDAO.EditOrder(retrievedOrder));
+        assertTrue(orderDAO.update(retrievedOrder));
 
-        Order updatedOrder = orderDAO.getOrderById(retrievedOrder.getOrderId());
+        Order updatedOrder = orderDAO.getById(retrievedOrder.getOrderId());
         assertNotNull(updatedOrder);
         assertEquals(retrievedOrder.getAddress(), updatedOrder.getAddress());
         assertEquals(retrievedOrder.getCity(), updatedOrder.getCity());

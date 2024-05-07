@@ -33,7 +33,7 @@ border:2px;
 <body style="background-color: #EEEEEE;">
 <br>
 <%GenreDAO genreDAO=new GenreDAO(DBConnect.getConn()); 
-List<Genre> listOfGenres=genreDAO.getAllGenre();
+List<Genre> listOfGenres=genreDAO.getAll();
 
 %><div class="col-md-6 offset-md-3 shadow" style="background-color:white;">
 	<h2 style="font-family: 'Thelma', sans-serif;" class="text-center">Genres</h2>

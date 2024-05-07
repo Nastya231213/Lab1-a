@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import com.DB.DBConnect;
 import com.dao.GenreDAO;
+import com.entity.Genre;
 
 /**
  * Servlet implementation class AdminAddGenreServlet
@@ -25,10 +26,11 @@ public class AdminAddGenreServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		String genre = request.getParameter("genre");
+		String genreName = request.getParameter("genre");
 		GenreDAO dao = new GenreDAO(DBConnect.getConn());
 		HttpSession session = request.getSession();
-		boolean flag = dao.insertGenre(genre);
+		Genre genre=new Genre(genreName);
+		boolean flag = dao.insert(genre);
 		if (flag) {
 			session.setAttribute("succMsg", "The genre has been added successfully");
 

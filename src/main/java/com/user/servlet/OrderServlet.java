@@ -46,8 +46,8 @@ public class OrderServlet extends HttpServlet {
 
 		Order order = new Order(email, address, fullName, city, price, phone, formatDate, state,userId);
 		OrderDAO dao = new OrderDAO(DBConnect.getConn());
-		dao.insertNewOrder(order);
-		Order order_=dao.getLastOrderByUserid(userId);
+		dao.insert(order);
+		Order order_=dao.getLastOrderByUserId(userId);
 		
 		Cart cart=(Cart) session.getAttribute("cart");
 		dao.insertAllItemsFromTheCart(cart, order_.getOrderId());

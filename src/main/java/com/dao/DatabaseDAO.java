@@ -45,11 +45,16 @@ public class DatabaseDAO {
         }
         return success;
     }
-    public boolean delete(String tableName, String condition) {
+    public boolean delete(String tableName, String condition, Object[] values) {
         boolean success = false;
         try {
-            String sql = "DELETE FROM " + tableName + " WHERE " + condition;
-            PreparedStatement pst = conn.prepareStatement(sql);
+            StringBuilder sql = new StringBuilder("DELETE FROM ");
+            sql.append(tableName).append(" WHERE ").append(condition);
+            PreparedStatement pst = conn.prepareStatement(sql.toString());
+                        for (int i = 0; i < values.length; i++) {
+                pst.setObject(i + 1, values[i]);
+            }
+            
             int rowsAffected = pst.executeUpdate();
             if (rowsAffected > 0) {
                 success = true;
@@ -60,7 +65,7 @@ public class DatabaseDAO {
         return success;
     }
 
-    public boolean update(String tableName, String[] columns, Object[] values, String condition) {
+    public boolean update(String tableName, String[] columns, Object[] values, String condition, Object[] conditionValues) {
         boolean success = false;
         try {
             StringBuilder sql = new StringBuilder("UPDATE ").append(tableName).append(" SET ");
@@ -72,8 +77,12 @@ public class DatabaseDAO {
             }
             sql.append(" WHERE ").append(condition);
             PreparedStatement pst = conn.prepareStatement(sql.toString());
-            for (int i = 0; i < values.length; i++) {
-                pst.setObject(i + 1, values[i]);
+            int parameterIndex = 1;
+            for (Object value : values) {
+                pst.setObject(parameterIndex++, value);
+            }
+            for (Object conditionValue : conditionValues) {
+                pst.setObject(parameterIndex++, conditionValue);
             }
             int rowsAffected = pst.executeUpdate();
             if (rowsAffected > 0) {
@@ -89,11 +98,15 @@ public class DatabaseDAO {
         ResultSet rs = null;
         try {
             StringBuilder sql = new StringBuilder("SELECT ");
-            for (int i = 0; i < columns.length; i++) {
-                sql.append(columns[i]);
-                if (i < columns.length - 1) {
-                    sql.append(", ");
+            if(columns != null && columns.length > 0) {
+                for (int i = 0; i < columns.length; i++) {
+                    sql.append(columns[i]);
+                    if (i < columns.length - 1) {
+                        sql.append(", ");
+                    }
                 }
+            } else {
+                sql.append("*");
             }
             sql.append(" FROM ").append(tableName);
             if (condition != null && !condition.isEmpty()) {
@@ -111,6 +124,7 @@ public class DatabaseDAO {
         }
         return rs;
     }
+
     public ResultSet executeQuery(String sql, Object[] params) {
         ResultSet rs = null;
         try {

@@ -112,7 +112,6 @@ public class UserDAO extends DatabaseDAO implements GenericDAO<User> {
 	}
 
 
-	  @Override
 	    public boolean update(User user) {
 	        String[] columns = {"username", "email", "full_name", "phone_number", "address"};
 	        Object[] values = {user.getUsername(), user.getEmail(), user.getFullName(), user.getPhone_number(), user.getAddress()};
@@ -165,10 +164,10 @@ public class UserDAO extends DatabaseDAO implements GenericDAO<User> {
 
     @Override
     public boolean delete(int userId) {
-        String condition = "user_id=" + userId;
-        return delete("user", condition);
+        String condition = "user_id=?";
+        Object[] values = {userId};
+        return delete("user", condition, values);
     }
-
 
 
     public boolean updateUserInProfile(User user) {

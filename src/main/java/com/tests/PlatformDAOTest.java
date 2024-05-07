@@ -36,11 +36,11 @@ public class PlatformDAOTest {
 	@Test
 	 public void testInsertPlatform() {
         // Insert a platform
-        assertTrue("Platform insertion failed", platformDAO.insertPlatform("TestPlatform"));
+        assertTrue("Platform insertion failed", platformDAO.insert("TestPlatform"));
     }
 	 @Test
 	    public void testGetAllPlatforms() {
-	        List<Platform> platforms = platformDAO.getAllPlatforms();
+	        List<Platform> platforms = platformDAO.getAll();
 
 	        assertNotNull("Returned platform list is null", platforms);
 	        assertFalse("Returned platform list is empty", platforms.isEmpty());
@@ -53,8 +53,8 @@ public class PlatformDAOTest {
 
 			    int lastPlatformId =lastPlatform.getId();
 	            
-			    assertTrue(platformDAO.deletePlatform(lastPlatformId));
+			    assertTrue(platformDAO.delete(lastPlatformId));
 
-			    assertNull(platformDAO.getPlatformById(lastPlatformId));
+			    assertNull(platformDAO.getById(lastPlatformId));
 	  }
 }

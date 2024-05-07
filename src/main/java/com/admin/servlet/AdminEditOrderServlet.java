@@ -31,7 +31,7 @@ public class AdminEditOrderServlet extends HttpServlet {
 	         int orderId=Integer.parseInt(request.getParameter("id"));
 	         
 	         OrderDAO orderDAO=new OrderDAO(DBConnect.getConn());
-	         Order order=orderDAO.getOrderById(orderId);
+	         Order order=orderDAO.getById(orderId);
 	         order.setFullName(name);
 	         order.setEmail(email);
 	         order.setPhone(phoneNum);
@@ -39,7 +39,7 @@ public class AdminEditOrderServlet extends HttpServlet {
 	         order.setCity(city);
 	         order.setState(state);
 	         order.setStatus(status);
-	         boolean flag=orderDAO.EditOrder(order);
+	         boolean flag=orderDAO.update(order);
 	         HttpSession session=request.getSession();
 	         if(flag) {
 	        	 session.setAttribute("succMsg", "The order was updated!");

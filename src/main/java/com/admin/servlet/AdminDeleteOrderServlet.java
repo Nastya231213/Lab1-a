@@ -21,7 +21,7 @@ public class AdminDeleteOrderServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int orderId=Integer.parseInt(request.getParameter("id"));
 		OrderDAO orderDAO=new OrderDAO(DBConnect.getConn());
-		boolean flag=orderDAO.deleteOrder(orderId);
+		boolean flag=orderDAO.delete(orderId);
 		HttpSession session=request.getSession();
 		
 	      if(flag) {

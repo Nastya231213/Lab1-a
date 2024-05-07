@@ -68,9 +68,9 @@ color:#E0FFFF;
 				%>
 						<p><%=g.getTitle()%></p>
 						<%
-						String nameGenre = daoGenre.getGenreById(g.getGenre_id()).getName();
+						String nameGenre = daoGenre.getById(g.getGenre_id()).getName();
 						PlatformDAO daoPlatform = new PlatformDAO(DBConnect.getConn());
-						String namePlatform = daoPlatform.getPlatformById(g.getPlatform_id()).getName();
+						String namePlatform = daoPlatform.getById(g.getPlatform_id()).getName();
 						%>
 						<div align="left">
 						<p>
@@ -140,9 +140,9 @@ color:#E0FFFF;
 							style="width: 150px; height: 220px;"> <br> <br>
 						<p><%=g.getTitle()%></p>
 						<%
-						String nameGenre = daoGenre.getGenreById(g.getGenre_id()).getName();
+						String nameGenre = daoGenre.getById(g.getGenre_id()).getName();
 						PlatformDAO daoPlatform = new PlatformDAO(DBConnect.getConn());
-						String namePlatform = daoPlatform.getPlatformById(g.getPlatform_id()).getName();
+						String namePlatform = daoPlatform.getById(g.getPlatform_id()).getName();
 						%>
 						<div align="left">
 							<p>

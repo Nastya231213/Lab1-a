@@ -9,135 +9,73 @@ import java.util.List;
 
 import com.entity.Genre;
 
-public class GenreDAO {
+public class GenreDAO extends DatabaseDAO implements GenericDAO<Genre> {
 
-	Connection conn=null;
-	PreparedStatement pst;
-    ResultSet rs;
-	public GenreDAO(Connection conn) {
-		this.conn=conn;
-	}
-	
-	
-	public boolean insertGenre(String name) {
-		boolean f = false;
+    public GenreDAO(Connection conn) {
+        super(conn);
+    }
+
+    public boolean insert(Genre genre) {
+        String[] columns = {"name"};
+        Object[] values = {genre.getName()};
+        return insert("genre", columns, values);
+    }
+
+    public List<Genre> getAll() {
+        List<Genre> listGenre = new ArrayList<Genre>();
+
         try {
-        	String sql="insert into genre (name) values(?)";
-        	pst=conn.prepareStatement(sql);
-        	pst.setString(1, name);
-        	int i=pst.executeUpdate();
-        	if(i==1) {
-        		f=true;
-        	}
-        	
-        }catch(Exception e) {
-        	e.printStackTrace();    	
-        }
-		
-		
-		return f;
-	}
-	
-	public List<Genre> getAllGenre(){
-		List<Genre> listGenre=new ArrayList<Genre>();
-		
-		try {
-			String sql="select * from genre";
-			pst=conn.prepareStatement(sql);
-			rs=pst.executeQuery();
-			while(rs.next()) {
-				Genre genre=new Genre();
-				genre.setId(rs.getInt(1));
-				genre.setName(rs.getString(2));
-				listGenre.add(genre);
-			}
-			
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		return listGenre;
-	}
-	
-	public Genre characteristics(int id) {
-		Genre g=null;
-		
-		try {
-			String sql="select * from  genre where genre_id=?";
-			pst=conn.prepareStatement(sql);
-			pst.setInt(1,id);
-			rs=pst.executeQuery();
-			while(rs.next()) {
-				g=new Genre();
-				g.setId(id);
-				g.setName(rs.getString(2));
-			}
-		     
-			
-			
-		}catch(Exception e) {
-			
-			e.printStackTrace();
-		}
-		return g;
-	}
-	public Genre getGenreById(int id){
-		Genre genre=new Genre();
-		try {
-			String sql="select * from genre where genre_id=?";
-			pst=conn.prepareStatement(sql);
-			pst.setInt(1, id);
-			rs=pst.executeQuery();
-			if(rs.next()) {
-				genre.setId(rs.getInt(1));
-				genre.setName(rs.getString(2));
-			}
-			
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		return genre;
-	}
-	public Genre getLastGenre() {
-	    Genre genre = null;
-	    try {
-	        String sql = "SELECT * FROM genre ORDER BY genre_id DESC LIMIT 1";
-	        pst = conn.prepareStatement(sql);
-	        rs = pst.executeQuery();
-	        if (rs.next()) {
-	            genre = new Genre();
-	            genre.setId(rs.getInt("genre_id"));
-	            genre.setName(rs.getString("name"));
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	    return genre;
-	}
-	public boolean deleteGenre(int id){
-		boolean flag=false;
-		try {
-			String sql="delete from genre where genre_id=?";
-			pst=conn.prepareStatement(sql);
-			pst.setInt(1, id);
-			int f=pst.executeUpdate();
-            if(f==1) {
-            	flag=true;
+            String sql = "SELECT * FROM genre";
+            ResultSet rs = select("genre", null, null, null);
+            while (rs.next()) {
+                Genre genre = new Genre();
+                genre.setId(rs.getInt(1));
+                genre.setName(rs.getString(2));
+                listGenre.add(genre);
             }
-			
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		return flag;
-	}
-	public void closeConnection() {
-		try {
-			this.conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listGenre;
+    }
+
+    public Genre getById(int id) {
+        Genre genre = new Genre();
+        try {
+            String sql = "SELECT * FROM genre WHERE genre_id=?";
+            Object[] values = {id};
+            ResultSet rs = select("genre", null, sql, values);
+            if (rs.next()) {
+                genre.setId(rs.getInt(1));
+                genre.setName(rs.getString(2));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return genre;
+    }
+
+    public Genre getLastGenre() {
+        Genre genre = null;
+        try {
+            String sql = "SELECT * FROM genre ORDER BY genre_id DESC LIMIT 1";
+            ResultSet rs = select("genre", null, sql, null);
+            if (rs.next()) {
+                genre = new Genre();
+                genre.setId(rs.getInt(1));
+                genre.setName(rs.getString(2));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return genre;
+    }
+
+    public boolean delete(int id) {
+        String condition = "genre_id=?";
+        Object[] values = {id};
+        return delete("genre", condition, values);
+    }
+
 }
+

@@ -53,7 +53,7 @@ a.active {
 	<%
 	int gid = Integer.parseInt(request.getParameter("id"));
 	GameDAO daoGame = new GameDAO(DBConnect.getConn());
-	Game g = daoGame.getGameById(gid);
+	Game g = daoGame.getById(gid);
 	GenreDAO genreDAO = new GenreDAO(DBConnect.getConn());
 	PlatformDAO platformDAO = new PlatformDAO(DBConnect.getConn());
 	%>
@@ -127,10 +127,10 @@ a.active {
 								<%=g.getYear()%></p>
 							<p>
 								Genre:
-								<%=genreDAO.getGenreById(g.getGenre_id()).getName()%></p>
+								<%=genreDAO.getById(g.getGenre_id()).getName()%></p>
 							<p>
 								Platform:
-								<%=platformDAO.getPlatformById(g.getPlatform_id()).getName()%></p>
+								<%=platformDAO.getById(g.getPlatform_id()).getName()%></p>
 							<p>
 								Price: <i class="fas fa-dollar-sign"></i><%=g.getPrice()%></p>
 

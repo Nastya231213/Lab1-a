@@ -11,88 +11,66 @@ import java.util.List;
 
 import com.entity.Review;
 
-public class ReviewDAO {
-	Connection conn;
-	PreparedStatement pst;
-	ResultSet rs;
-	public ReviewDAO(Connection conn){
-		this.conn=conn;
-		
-	}
+public class ReviewDAO extends DatabaseDAO {
 
-	public List<Review>getReviewsByGameId(int gameId) {
-		List<Review> reviewsList=new ArrayList<Review>();
-		try {
-			String sql="select * from review where game_id=?";
-			pst=conn.prepareStatement(sql);
-			pst.setInt(1, gameId);
-			rs=pst.executeQuery();
+    public ReviewDAO(Connection conn) {
+        super(conn);
+    }
 
-			while(rs.next()) {
-				Review rev=new Review();
-				rev.setId(rs.getInt(1));
-				rev.setGame_id(gameId);
-				rev.setUser_id(rs.getInt(3));
-				rev.setRating(rs.getDouble(4));
-				rev.setComment(rs.getString(5));
-				reviewsList.add(rev);
-			}
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		return reviewsList;
-		
-	}
-	public boolean insertReview(Review rev) {
-		boolean f=false;
-		try {
-			String sql="insert into review(game_id, user_id,rating,comment,headline,date) values(?,?,?,?,?,?)";
-			Date now =new Date();
-			SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String formattedSateTime=formatter.format(now);
-			pst=conn.prepareStatement(sql);
-			pst.setInt(1,rev.getGame_id());
-			pst.setInt(2, rev.getUser_id());
-			pst.setDouble(3,rev.getRating());
-			pst.setString(4,rev.getComment());
-			pst.setString(5, rev.getHeadline());
-			pst.setString(6, formattedSateTime);
-			int i=pst.executeUpdate();
-			if(i==1) {
-				f=true;
-			}
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		return f;
-	}
+    public List<Review> getReviewsByGameId(int gameId) {
+        List<Review> reviewsList = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM review WHERE game_id=?";
+            ResultSet rs = select("review", new String[]{"*"}, "game_id=?", new Object[]{gameId});
+            while (rs.next()) {
+                Review rev = new Review();
+                rev.setId(rs.getInt(1));
+                rev.setGame_id(gameId);
+                rev.setUser_id(rs.getInt(3));
+                rev.setRating(rs.getDouble(4));
+                rev.setComment(rs.getString(5));
+                reviewsList.add(rev);
+            }
+            rs.close(); 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reviewsList;
+    }
+
+    public boolean insertReview(Review rev) {
+        boolean f = false;
+        try {
+            String sql = "INSERT INTO review (game_id, user_id, rating, comment, headline, date) VALUES (?, ?, ?, ?, ?, ?)";
+            Date now = new Date();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String formattedSateTime = formatter.format(now);
+            Object[] values = {rev.getGame_id(), rev.getUser_id(), rev.getRating(), rev.getComment(), rev.getHeadline(), formattedSateTime};
+            f = insert("review", new String[]{"game_id", "user_id", "rating", "comment", "headline", "date"}, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return f;
+    }
 	
-	public double calculateAverageRatingOfGame(int gameId) {
-		double res=0;
-		int quantity=0;
-		try {
-			String sql="select * from review where game_id=?";
-			pst=conn.prepareStatement(sql);
-			pst.setInt(1, gameId);
-			rs=pst.executeQuery();
-			
-			while(rs.next()) {
-				quantity++;
-				res+=rs.getDouble(4);
-				
-			}
-			
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		if(quantity!=0) {
-			res/=quantity;
-		}
-		return res;
-	}
+    public double calculateAverageRatingOfGame(int gameId) {
+        double res = 0;
+        int quantity = 0;
+        try {
+            ResultSet rs = select("review", new String[]{"rating"}, "game_id=?", new Object[]{gameId});
+            while (rs.next()) {
+                quantity++;
+                res += rs.getDouble("rating");
+            }
+            rs.close(); 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (quantity != 0) {
+            res /= quantity;
+        }
+        return res;
+    }
 	
 	public String getRatingString(int gameId) {
 		String result="";
@@ -131,12 +109,5 @@ public class ReviewDAO {
 		}
 		return result.substring(0,result.length()-1);
 	}
-	public void closeConnection() {
-		try {
-			this.conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+
 }

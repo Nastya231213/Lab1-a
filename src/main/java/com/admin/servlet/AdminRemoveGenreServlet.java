@@ -21,7 +21,7 @@ public class AdminRemoveGenreServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int genreId=Integer.parseInt(request.getParameter("id"));
 		GenreDAO genreDAO=new GenreDAO(DBConnect.getConn());
-		boolean flag=genreDAO.deleteGenre(genreId);
+		boolean flag=genreDAO.delete(genreId);
 		HttpSession session=request.getSession();
 	      if(flag) {
 	    	  session.setAttribute("succMsg", "Successfully deleted!");

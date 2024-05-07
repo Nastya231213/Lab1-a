@@ -1,7 +1,6 @@
 package com.dao;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,122 +8,83 @@ import java.util.List;
 
 import com.entity.Platform;
 
-public class PlatformDAO {
-Connection conn=null;
-PreparedStatement pst;
-ResultSet rs;	
-	public PlatformDAO(Connection conn) {
-		this.conn=conn;
+public class PlatformDAO extends DatabaseDAO implements GenericDAO<Platform> {
+    public PlatformDAO(Connection conn) {
+        super(conn);
+    }
+    @Override
+    public boolean insert(Platform platform) {
+        String[] columns = {"name"};
+        Object[] values = {platform.getName()};
+        return insert("platforms", columns, values);
+    }
+
+    public List<Platform> getAll() {
+        List<Platform> list = new ArrayList<Platform>();
+        String[] columns = {"id", "name"};
+        ResultSet rs = select("platforms", columns, null, null);
+        try {
+            while (rs.next()) {
+                Platform pl = new Platform();
+                pl.setId(rs.getInt("id"));
+                pl.setName(rs.getString("name"));
+                list.add(pl);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public Platform getById(int id) {
+        Platform platform = null;
+        String[] columns = {"name"};
+        Object[] values = {id};
+        ResultSet rs = select("platforms", columns, "id=?", values);
+        try {
+            if (rs.next()) {
+                platform = new Platform();
+                platform.setId(id);
+                platform.setName(rs.getString("name"));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return platform;
+    }
+
+    public Platform getLastPlatform() {
+        Platform platform = null;
+        String[] columns = {"id", "name"};
+        ResultSet rs = select("platforms", columns, null, null);
+        try {
+            if (rs.last()) {
+                platform = new Platform();
+                platform.setId(rs.getInt("id"));
+                platform.setName(rs.getString("name"));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return platform;
+    }
+
+    public boolean delete(int id) {
+        String condition = "id=" + id;
+        return delete("platforms", condition);
+    }
+
+
+
+	@Override
+	public boolean update(Platform obj) {
+		// TODO Auto-generated method stub
+		return false;
 	}
+
 	
-	
-	public boolean insertPlatform(String namePlatform) {
-		boolean f=false;
-		
-		try {
-			String sql="insert into platforms(name) values(?)";
-			pst=conn.prepareStatement(sql);
-			pst.setString(1,namePlatform);
-			int i=pst.executeUpdate();
-			
-			if(i==1) {
-				f=true;
-			}
-			
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		return f;
-	}
-	public List<Platform> getAllPlatforms() {
-		List<Platform> list=new ArrayList<Platform>();
-		try {
-			String sql="select * from platforms";
-			pst=conn.prepareStatement(sql);
-			
-			rs=pst.executeQuery();
-			while(rs.next()) {
-				Platform pl=new Platform();
-				pl.setId(rs.getInt(1));
-				pl.setName(rs.getString(2));
-				list.add(pl);
-			}
-			
-		}catch(Exception e) {
-	         e.printStackTrace();
-		}
-		return list;
-	}
-	
-	public Platform getPlatformById(int id) {
-		Platform platform=null;
-		
-		try {
-			String sql="select * from platforms where id=?";
-	        pst=conn.prepareStatement(sql);
-	        pst.setInt(1, id);
-	        rs=pst.executeQuery();
-	        
-	        while(rs.next()) {
-	        	platform=new Platform();
-	        	platform.setId(id);
-	        	platform.setName(rs.getString(2));
-	        }
-	        
-	        
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		return platform;
-	}
-	public Platform getLastPlatform() {
-	    Platform platform = null;
-	    
-	    try {
-	        String sql = "SELECT * FROM platforms ORDER BY id DESC LIMIT 1";
-	        pst = conn.prepareStatement(sql);
-	        rs = pst.executeQuery();
-	        
-	        if (rs.next()) {
-	            platform = new Platform();
-	            platform.setId(rs.getInt(1));
-	            platform.setName(rs.getString(2));
-	        }
-	        
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    
-	    return platform;
-	}
-	
-	public boolean deletePlatform(int id) {
-		boolean flag=false;
-		
-		try {
-			String sql="delete from platforms where id=?";
-	        pst=conn.prepareStatement(sql);
-	        pst.setInt(1, id);
-	        int f=pst.executeUpdate();
-	   
-	        if(f==1) {
-	        	flag=true;
-	        }
-	        
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		return flag;
-	}
-	public void closeConnection() {
-		try {
-			this.conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }
+

@@ -9,8 +9,6 @@ public interface GenericDAO<T> {
 
     T getById(int id);
 
-    boolean update(T obj);
-
     boolean delete(int id);
 
 }

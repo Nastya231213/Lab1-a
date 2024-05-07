@@ -121,10 +121,10 @@ a.active {
 
 							<p>
 								Genre:
-								<%=genreDAO.getGenreById(g.getGenre_id()).getName()%></p>
+								<%=genreDAO.getById(g.getGenre_id()).getName()%></p>
 							<p>
 								Platform:
-								<%=platformDAO.getPlatformById(g.getPlatform_id()).getName()%></p>
+								<%=platformDAO.getById(g.getPlatform_id()).getName()%></p>
 							<p>
 								Price: <i class="fas fa-dollar-sign"></i><%=g.getPrice()%></p>
 							<p>

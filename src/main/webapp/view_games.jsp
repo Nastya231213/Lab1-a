@@ -52,7 +52,7 @@ select option {
 	GameDAO dao1 = new GameDAO(DBConnect.getConn());
 	GenreDAO daoGenre = new GenreDAO(DBConnect.getConn());
 
-	List<Game> gamesList = dao1.getAllGames();
+	List<Game> gamesList = dao1.getAll();
 	int paramGenre = -1;
 	String genre_ = request.getParameter("genre");
 	if (genre_ != null) {
