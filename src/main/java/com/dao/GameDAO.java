@@ -9,91 +9,55 @@ import java.util.List;
 
 import com.entity.Game;
 
-public class GameDAO {
-	Connection conn = null;
-	PreparedStatement pst;
-	ResultSet rs;
+public class GameDAO extends DatabaseDAO implements GenericDAO<Game>{
 
-	public GameDAO(Connection conn) {
-		this.conn = conn;
-	}
+    public GameDAO(Connection conn) {
+       super(conn);
+    }
+@Override
+    public boolean insert(Game game) {
+        String tableName = "games";
+        String[] columns = {"title", "description", "price", "platform_id", "image_url", "genre_id", "year", "developer_name"};
+        Object[] values = {game.getTitle(), game.getDescription(), game.getPrice(), game.getPlatform_id(), game.getPhotoName(), game.getGenre_id(), game.getYear(), game.getDeveloper()};
+        return insert(tableName, columns, values);
+    }
+@Override
 
-	public boolean insertGame(Game game) {
-
-		boolean f = false;
-
-		try {
-			String sql = "insert into games(title,desription,price,platform_id,image_url,genre_id,year,developer_name) values(?,?,?,?,?,?,?,?)";
-			pst = conn.prepareStatement(sql);
-			pst.setString(1, game.getTitle());
-			pst.setString(2, game.getDescription());
-			pst.setDouble(3, game.getPrice());
-			pst.setInt(4, game.getPlatform_id());
-			pst.setString(5, game.getPhotoName());
-			pst.setInt(6, game.getGenre_id());
-			pst.setString(7, game.getYear());
-			pst.setString(8, game.getDeveloper());
-
-			int i = pst.executeUpdate();
-
-			if (i == 1) {
-				f = true;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return f;
-	}
-
-	public List<Game> getAllGames() {
-		List<Game> listOfGames = new ArrayList<Game>();
-
-		String sql = "select * from games order by game_id DESC";
-		try {
-			pst = conn.prepareStatement(sql);
-			rs = pst.executeQuery();
-
-			while (rs.next()) {
-				Game game = new Game();
-				game.setId(rs.getInt(1));
-				game.setTitle(rs.getString(2));
-				game.setDescription(rs.getString(3));
-				game.setPrice(rs.getDouble(4));
-				game.setPlatform_id(rs.getInt(5));
-				game.setPhotoName(rs.getString(6));
-				game.setGenre_id(rs.getInt(7));
-				game.setYear(rs.getString(8));
-
-				listOfGames.add(game);
-
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return listOfGames;
-	}
-
+    public List<Game> getAll() {
+        List<Game> listOfGames = new ArrayList<>();
+        String tableName = "games";
+        String[] columns = {"game_id", "title", "description", "price", "platform_id", "image_url", "genre_id", "year"};
+        ResultSet rs = select(tableName, columns, null,null);
+        try {
+            while (rs.next()) {
+                Game game = mapResultSetToGame(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listOfGames;
+    }
+    private Game mapResultSetToGame(ResultSet rs) throws SQLException {
+        Game game = new Game();
+        game.setId(rs.getInt(1));
+        game.setTitle(rs.getString(2));
+        game.setDescription(rs.getString(3));
+        game.setPrice(rs.getDouble(4));
+        game.setPlatform_id(rs.getInt(5));
+        game.setPhotoName(rs.getString(6));
+        game.setGenre_id(rs.getInt(7));
+        game.setYear(rs.getString(8));
+        return game;
+    }
 	public List<Game> getAllRecentGames() {
 		List<Game> listOfGames = new ArrayList<Game>();
 
 		String sql = "select * from games order by game_id DESC";
 		try {
-			pst = conn.prepareStatement(sql);
-			rs = pst.executeQuery();
+			ResultSet rs=executeQuery(sql,null);
 			int i = 1;
 			while (rs.next() && i <= 4) {
-				Game game = new Game();
-				game.setId(rs.getInt(1));
-				game.setTitle(rs.getString(2));
-				game.setDescription(rs.getString(3));
-				game.setPrice(rs.getDouble(4));
-				game.setPlatform_id(rs.getInt(5));
-				game.setPhotoName(rs.getString(6));
-				game.setGenre_id(rs.getInt(7));
-				game.setYear(rs.getString(8));
+				Game game =mapResultSetToGame(rs);
 				listOfGames.add(game);
 				i++;
 			}
@@ -110,19 +74,10 @@ public class GameDAO {
 
 		String sql = "select * from games order by year DESC";
 		try {
-			pst = conn.prepareStatement(sql);
-			rs = pst.executeQuery();
+			ResultSet rs= executeQuery(sql,null);
 			int i = 1;
 			while (rs.next() && i <= 4) {
-				Game game = new Game();
-				game.setId(rs.getInt(1));
-				game.setTitle(rs.getString(2));
-				game.setDescription(rs.getString(3));
-				game.setPrice(rs.getDouble(4));
-				game.setPlatform_id(rs.getInt(5));
-				game.setPhotoName(rs.getString(6));
-				game.setGenre_id(rs.getInt(7));
-				game.setYear(rs.getString(8));
+				Game game = mapResultSetToGame(rs);
 
 				listOfGames.add(game);
 				i++;
@@ -135,383 +90,244 @@ public class GameDAO {
 		return listOfGames;
 	}
 
-	public List<Game> getGameByGenreId(int genreId) throws SQLException {
+    public List<Game> getGameByGenreId(int genreId) {
+        List<Game> listOfGames = new ArrayList<>();
+        try {
+            String[] columns = {"*"};
+            String condition = "genre_id = ?";
+            Object[] values = {genreId};
 
-		List<Game> listOfGames = new ArrayList<Game>();
+            ResultSet rs = select("games", columns, condition, values);
 
-		String sql = "select * from games where genre_id=?";
-		pst = conn.prepareStatement(sql);
-		pst.setInt(1, genreId);
-		int i = 1;
-		rs = pst.executeQuery();
+            int i = 1;
+            while (rs.next() && i <= 4) {
+	            Game game = mapResultSetToGame(rs);
+          
+                listOfGames.add(game);
+                i++;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listOfGames;
+    }
 
-		while (rs.next() && i <= 4) {
-			Game game = new Game();
-			game.setId(rs.getInt(1));
-			game.setTitle(rs.getString(2));
-			game.setDescription(rs.getString(3));
-			game.setPrice(rs.getDouble(4));
-			game.setPlatform_id(rs.getInt(5));
-			game.setPhotoName(rs.getString(6));
-			game.setGenre_id(rs.getInt(7));
-			game.setYear(rs.getString(8));
+    public List<Game> getGamesBySearch(String keyword, int category_id, int platform_id, int minPrice, int maxPrice) {
+        List<Game> listGames = new ArrayList<Game>();
 
-			listOfGames.add(game);
-			i++;
-		}
-		return listOfGames;
-	}
+        try {
+            String[] columns = {"*"};
+            String condition = "genre_id = ? AND platform_id = ? AND (title LIKE ? OR description LIKE ? OR price BETWEEN ? AND ?)";
+            Object[] values = {category_id, platform_id, "%" + keyword + "%", "%" + keyword + "%", minPrice, maxPrice};
 
-	public List<Game> getGamesBySearch(String keyword, int category_id, int platform_id, int minPrice, int maxPrice) {
-		List<Game> listGames = new ArrayList<Game>();
+            ResultSet rs = select("games", columns, condition, values);
 
-		try {
-			String sql = "SELECT * FROM games WHERE genre_id = ? AND platform_id = ? AND (title LIKE ? OR desription LIKE ? OR price LIKE ?)";
-			PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setInt(1, category_id);
-			pst.setInt(2, platform_id);
-			pst.setString(3, "%" + keyword + "%");
-			pst.setString(4, "%" + keyword + "%");
-			pst.setString(5, "%" + keyword + "%");
-			rs = pst.executeQuery();
-			while (rs.next()) {
-				Game game = new Game();
-				game.setId(rs.getInt(1));
-				game.setTitle(rs.getString(2));
-				game.setDescription(rs.getString(3));
-				game.setPrice(rs.getDouble(4));
-				game.setPlatform_id(rs.getInt(5));
-				game.setPhotoName(rs.getString(6));
-				game.setGenre_id(rs.getInt(7));
-				game.setYear(rs.getString(8));
-				listGames.add(game);
-			}
+            while (rs.next()) {
+                Game game =mapResultSetToGame(rs);
+                listGames.add(game);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listGames;
+    }
+    public List<Game> getGamesBySearchCat(String keyword, int category_id, int minPrice, int maxPrice) {
+        List<Game> listGames = new ArrayList<Game>();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return listGames;
+        try {
+            String sql = "SELECT * FROM games WHERE genre_id = ? AND (title LIKE ? OR description LIKE ? OR price BETWEEN ? AND ?)";
+            Object[] params = {category_id, "%" + keyword + "%", "%" + keyword + "%", minPrice, maxPrice};
+            ResultSet rs = executeQuery(sql, params);
 
-	}
+            while (rs.next()) {
+                double price = rs.getDouble(4);
+                if (price >= minPrice && price <= maxPrice) {
+                    Game game =mapResultSetToGame(rs);
+                    listGames.add(game);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-	public List<Game> getGamesBySearchCat(String keyword, int category_id, int minPrice, int maxPrice) {
-		List<Game> listGames = new ArrayList<Game>();
+        return listGames;
+    }
 
-		try {
-			String sql = "SELECT * FROM games WHERE genre_id = ? AND (title LIKE ? OR desription LIKE ? OR price LIKE ?)";
-			PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setInt(1, category_id);
-			pst.setString(2, "%" + keyword + "%");
-			pst.setString(3, "%" + keyword + "%");
-			pst.setString(4, "%" + keyword + "%");
-			rs = pst.executeQuery();
-			while (rs.next()) {
-				double price=rs.getDouble(4);
-				if(minPrice<=price && maxPrice>=price) {
-				Game game = new Game();
-				game.setId(rs.getInt(1));
-				game.setTitle(rs.getString(2));
-				game.setDescription(rs.getString(3));
-				game.setPrice(rs.getDouble(4));
-				game.setPlatform_id(rs.getInt(5));
-				game.setPhotoName(rs.getString(6));
-				game.setGenre_id(rs.getInt(7));
-				game.setYear(rs.getString(8));
-				listGames.add(game);
-			}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return listGames;
 
-	}
+    public List<Game> getGamesBySearchPlat(String keyword, int platform_id, int minPrice, int maxPrice) {
+        List<Game> listGames = new ArrayList<Game>();
 
-	public List<Game> getGamesBySearchPlat(String keyword, int platform_id, int minPrice, int maxPrice) {
-		List<Game> listGames = new ArrayList<Game>();
+        try {
+            String sql = "SELECT * FROM games WHERE platform_id = ? AND (title LIKE ? OR description LIKE ? OR price BETWEEN ? AND ?)";
+            Object[] params = {platform_id, "%" + keyword + "%", "%" + keyword + "%", minPrice, maxPrice};
+            ResultSet rs = executeQuery(sql, params);
 
-		try {
-			String sql = "SELECT * FROM games WHERE platform_id = ? AND (title LIKE ? OR desription LIKE ? OR price LIKE ?)";
-			PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setInt(1, platform_id);
-			pst.setString(2, "%" + keyword + "%");
-			pst.setString(3, "%" + keyword + "%");
-			pst.setString(4, "%" + keyword + "%");
-			rs = pst.executeQuery();
-			while (rs.next()) {
-				double price = rs.getDouble(4);
-				if (price >= minPrice && price <= maxPrice) {
-					Game game = new Game();
-					game.setId(rs.getInt(1));
-					game.setTitle(rs.getString(2));
-					game.setDescription(rs.getString(3));
-					game.setPrice(rs.getDouble(4));
-					game.setPlatform_id(rs.getInt(5));
-					game.setPhotoName(rs.getString(6));
-					game.setGenre_id(rs.getInt(7));
-					game.setYear(rs.getString(8));
-					listGames.add(game);
-				}
-			}
+            while (rs.next()) {
+                double price = rs.getDouble(4);
+                if (price >= minPrice && price <= maxPrice) {
+                    Game game =mapResultSetToGame(rs);
+                    listGames.add(game);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return listGames;
-	}
+        return listGames;
+    }
+    public List<Game> getGamesBySearch(String keyword, int minPrice, int maxPrice) {
+        List<Game> listGames = new ArrayList<Game>();
 
-	public List<Game> getGamesBySearch(String keyword, int minPrice, int maxPrice) {
-		List<Game> listGames = new ArrayList<Game>();
+        try {
+            String sql = "SELECT * FROM games WHERE title LIKE ? OR description LIKE ? OR price BETWEEN ? AND ?";
+            Object[] params = {"%" + keyword + "%", "%" + keyword + "%", minPrice, maxPrice};
+            ResultSet rs = executeQuery(sql, params);
 
-		try {
-			String sql = "SELECT * FROM games WHERE title LIKE ? OR desription LIKE ? OR price LIKE ?";
-			PreparedStatement pst = conn.prepareStatement(sql);
+            while (rs.next()) {
+                double price = rs.getDouble(4);
+                if (price >= minPrice && price <= maxPrice) {
+                    Game game =mapResultSetToGame(rs);
+                    listGames.add(game);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-			pst.setString(1, "%" + keyword + "%");
-			pst.setString(2, "%" + keyword + "%");
-			pst.setString(3, "%" + keyword + "%");
-			rs = pst.executeQuery();
-			while (rs.next()) {
-				double price = rs.getDouble(4);
-				if (price >= minPrice && maxPrice >= price) {
-					Game game = new Game();
-					game.setId(rs.getInt(1));
-					game.setTitle(rs.getString(2));
-					game.setDescription(rs.getString(3));
-					game.setPrice(price);
-					game.setPlatform_id(rs.getInt(5));
-					game.setPhotoName(rs.getString(6));
-					game.setGenre_id(rs.getInt(7));
-					game.setYear(rs.getString(8));
-					listGames.add(game);
-				}
-			}
+        return listGames;
+    }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return listGames;
 
-	}
+    public List<Game> getGamesBySearch(int category_id, int platform_id, int minPrice, int maxPrice) {
+        List<Game> listGames = new ArrayList<Game>();
 
-	public List<Game> getGamesBySearch(int category_id, int platform_id, int minPrice, int maxPrice) {
-		List<Game> listGames = new ArrayList<Game>();
+        try {
+            String sql = "SELECT * FROM games WHERE genre_id = ? AND platform_id = ?";
+            Object[] params = {category_id, platform_id};
+            ResultSet rs = executeQuery(sql, params);
 
-		try {
-			String sql = "SELECT * FROM games WHERE genre_id = ? AND platform_id = ?";
-			PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setInt(1, category_id);
-			pst.setInt(2, platform_id);
+            while (rs.next()) {
+                double price = rs.getDouble(4);
+                if (minPrice <= price && price <= maxPrice) {
+                    Game game =mapResultSetToGame(rs);
+                    listGames.add(game);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-			rs = pst.executeQuery();
-			while (rs.next()) {
-				double price = rs.getDouble(4);
-				if (minPrice <= price && price <= maxPrice) {
-					Game game = new Game();
-					game.setId(rs.getInt(1));
-					game.setTitle(rs.getString(2));
-					game.setDescription(rs.getString(3));
-					game.setPrice(price);
-					game.setPlatform_id(rs.getInt(5));
-					game.setPhotoName(rs.getString(6));
-					game.setGenre_id(rs.getInt(7));
-					game.setYear(rs.getString(8));
-					listGames.add(game);
-				}
-			}
+        return listGames;
+    }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-		return listGames;
+    public List<Game> getGamesByGenreAndPlatform(int category_id, int platform_id) {
+        List<Game> listGames = new ArrayList<Game>();
 
-	}
+        try {
+            String[] columns = {"*"};
+            String condition = "genre_id = ? AND platform_id = ?";
+            Object[] values = {category_id, platform_id};
 
-	public List<Game> getGamesByGenreAndPlatform(int category_id, int platform_id) {
-		List<Game> listGames = new ArrayList<Game>();
+            ResultSet rs = select("games", columns, condition, values);
 
-		try {
-			String sql = "SELECT * FROM games WHERE genre_id = ? AND platform_id = ?";
-			PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setInt(1, category_id);
-			pst.setInt(2, platform_id);
+            while (rs.next()) {
+                Game game = mapResultSetToGame(rs);
+                listGames.add(game);
+            }
 
-			rs = pst.executeQuery();
-			while (rs.next()) {
-				Game game = new Game();
-				game.setId(rs.getInt(1));
-				game.setTitle(rs.getString(2));
-				game.setDescription(rs.getString(3));
-				game.setPrice(rs.getDouble(4));
-				game.setPlatform_id(rs.getInt(5));
-				game.setPhotoName(rs.getString(6));
-				game.setGenre_id(rs.getInt(7));
-				game.setYear(rs.getString(8));
-				listGames.add(game);
-			}
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        return listGames;
+    }
 
-		return listGames;
-	}
 
-	public List<Game> getGamesByDeveloper(int category_id, int platform_id, String developer) {
-		List<Game> listGames = new ArrayList<Game>();
+    public List<Game> getGamesByDeveloper(int category_id, int platform_id, String developer) {
+        List<Game> listGames = new ArrayList<>();
 
-		try {
-			String sql = "SELECT * FROM games WHERE genre_id = ? AND platform_id = ? AND developer_name=?";
-			PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setInt(1, category_id);
-			pst.setInt(2, platform_id);
-			pst.setString(3, developer);
+        try {
+            String[] columns = {"*"};
+            String condition = "genre_id = ? AND platform_id = ? AND developer_name = ?";
+            Object[] values = {category_id, platform_id, developer};
 
-			rs = pst.executeQuery();
-			while (rs.next()) {
-				Game game = new Game();
-				game.setId(rs.getInt(1));
-				game.setTitle(rs.getString(2));
-				game.setDescription(rs.getString(3));
-				game.setPrice(rs.getDouble(4));
-				game.setPlatform_id(rs.getInt(5));
-				game.setPhotoName(rs.getString(6));
-				game.setGenre_id(rs.getInt(7));
-				game.setYear(rs.getString(8));
-				listGames.add(game);
-			}
+            ResultSet rs = select("games", columns, condition, values);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return listGames;
+            while (rs.next()) {
+                Game game = mapResultSetToGame(rs);
+                listGames.add(game);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listGames;
+    }
 
-	}
 
-	public List<Game> getGamesBySearch(String keyword) {
-		List<Game> listGames = new ArrayList<Game>();
+    public List<Game> getGamesBySearch(String keyword) {
+        List<Game> listGames = new ArrayList<>();
 
-		try {
-			String sql = "SELECT * FROM games WHERE title LIKE ? OR desription LIKE ? OR price LIKE ?";
-			PreparedStatement pst = conn.prepareStatement(sql);
+        try {
+            String[] columns = {"*"};
+            String condition = "title LIKE ? OR desription LIKE ? OR price LIKE ?";
+            Object[] values = {"%" + keyword + "%", "%" + keyword + "%", "%" + keyword + "%"};
 
-			pst.setString(1, "%" + keyword + "%");
-			pst.setString(2, "%" + keyword + "%");
-			pst.setString(3, "%" + keyword + "%");
-			rs = pst.executeQuery();
-			while (rs.next()) {
-				Game game = new Game();
-				game.setId(rs.getInt(1));
-				game.setTitle(rs.getString(2));
-				game.setDescription(rs.getString(3));
-				game.setPrice(rs.getDouble(4));
-				game.setPlatform_id(rs.getInt(5));
-				game.setPhotoName(rs.getString(6));
-				game.setGenre_id(rs.getInt(7));
-				game.setYear(rs.getString(8));
-				listGames.add(game);
-			}
+            ResultSet rs = select("games", columns, condition, values);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return listGames;
+            while (rs.next()) {
+                Game game = mapResultSetToGame(rs);
+                listGames.add(game);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return listGames;
+    }
 
-	}
+	@Override
 
-	public Game getGameById(int id) {
-		Game game = null;
-		try {
-			String sql = "SELECT * FROM games WHERE game_id = ?";
-			PreparedStatement pst = conn.prepareStatement(sql);
-			pst.setInt(1, id);
+	public Game getById(int id) {
+	    Game game = null;
+	    try {
+	        String[] columns = {"*"};
+	        String condition = "game_id = ?";
+	        Object[] values = {id};
 
-			rs = pst.executeQuery();
-			while (rs.next()) {
-				game = new Game();
-				game.setId(rs.getInt(1));
-				game.setTitle(rs.getString(2));
-				game.setDescription(rs.getString(3));
-				game.setPrice(rs.getDouble(4));
-				game.setPlatform_id(rs.getInt(5));
-				game.setPhotoName(rs.getString(6));
-				game.setGenre_id(rs.getInt(7));
-				game.setYear(rs.getString(8));
-				game.setDeveloper(rs.getString(9));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	        ResultSet rs = select("games", columns, condition, values);
 
-		return game;
-	}
-	 public Game getLastGame() {
-	        Game game = null;
-	        try {
-	            String sql = "SELECT * FROM games ORDER BY game_id DESC LIMIT 1";
-	            PreparedStatement pst = conn.prepareStatement(sql);
+	        while (rs.next()) {
+	            game = mapResultSetToGame(rs);
 
-	            ResultSet rs = pst.executeQuery();
-	            if (rs.next()) {
-	                game = new Game();
-	                game.setId(rs.getInt(1));
-	                game.setTitle(rs.getString(2));
-	                game.setDescription(rs.getString(3));
-	                game.setPrice(rs.getDouble(4));
-	                game.setPlatform_id(rs.getInt(5));
-	                game.setPhotoName(rs.getString(6));
-	                game.setGenre_id(rs.getInt(7));
-	                game.setYear(rs.getString(8));
-	                game.setDeveloper(rs.getString(9));
-	            }
-	        } catch (SQLException e) {
-	            e.printStackTrace();
 	        }
-	        return game;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
 	    }
-	public void closeConnection() {
-		try {
-			this.conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+	    return game;
 	}
+	public Game getLastGame() {
+	    Game game = null;
+	    try {
+	        String sql = "SELECT * FROM games ORDER BY game_id DESC LIMIT 1";
+	        ResultSet rs = executeQuery(sql, null);
+
+	        if (rs.next()) {
+	            game = mapResultSetToGame(rs);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return game;
+	}
+
+	@Override
+	public boolean update(Game obj) {
+		return false;
+	}
+	@Override
+	public boolean delete(int id) {
+		return false;
+	}
+
 }

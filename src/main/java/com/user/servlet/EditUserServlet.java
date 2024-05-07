@@ -40,7 +40,7 @@ public class EditUserServlet extends HttpServlet {
 			user.setPhone_number(phoneNo);
 			user.setAddress(address);
 			UserDAO userDAO=new UserDAO(DBConnect.getConn());
-			boolean flag=userDAO.updateUserInProfile(user);
+			boolean flag=userDAO.update(user);
 			if(flag) {
 				request.setAttribute("succMsg", "Successfully updated!");
 			}else {

@@ -43,7 +43,7 @@ public class AdminAddGameServlet extends HttpServlet {
         
 		
 		
-		boolean flag = dao.insertGame(game);
+		boolean flag = dao.insert(game);
 		HttpSession session = request.getSession();
 		if (flag) {
 			String path = "C:\\Users\\olegp\\eclipse-workspace\\Games Collection\\src\\main\\webapp\\image";

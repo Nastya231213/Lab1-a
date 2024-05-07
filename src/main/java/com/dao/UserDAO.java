@@ -31,7 +31,7 @@ public class UserDAO extends DatabaseDAO implements GenericDAO<User> {
 	    public List<User> getAll() {
 	        List<User> listUsers = new ArrayList<>();
 
-	        ResultSet rs = select("user", new String[] { "*" }, null);
+	        ResultSet rs = select("user", new String[] { "*" }, null,null);
 	        try {
 	            while (rs.next()) {
 	                User user = new User();
@@ -51,11 +51,42 @@ public class UserDAO extends DatabaseDAO implements GenericDAO<User> {
 
 	        return listUsers;
 	    }
-	public User getLastUser() {
-	   User user=null;
-	    ResultSet rs = select("user", new String[]{"*"}, null);
+	 public User getLastUser() {
+		    User user = null;
+		    ResultSet rs = null;
+		    try {
+		        rs = select("user", new String[]{"*"}, null, null);
+		        if (rs.last()) {
+		            user = new User();
+		            user.setUser_id(rs.getInt("user_id"));
+		            user.setUsername(rs.getString("username"));
+		            user.setEmail(rs.getString("email"));
+		            user.setPassword(rs.getString("password"));
+		            user.setFullName(rs.getString("full_name"));
+		            user.setPhone_number(rs.getString("phone_number"));
+		            user.setAddress(rs.getString("address"));
+		            user.setRegistration_date(rs.getString("registration_date"));
+		            user.setHash(rs.getString("hash"));
+		        }
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    } finally {
+		        try {
+		            if (rs != null) {
+		                rs.close();
+		       
+
+
+	@Override
+	public User getById(int id) {
+	    User user = null;
+	    ResultSet rs = null;
 	    try {
-	        if (rs.last()) {
+	        String[] columns = {"user_id", "username", "email", "password", "full_name", "phone_number", "address", "registration_date"};
+	        String condition = "user_id=?";
+	        Object[] values = {id};
+	        rs = select("user", columns, condition, values);
+	        if (rs.next()) {
 	            user = new User();
 	            user.setUser_id(rs.getInt("user_id"));
 	            user.setUsername(rs.getString("username"));
@@ -65,45 +96,21 @@ public class UserDAO extends DatabaseDAO implements GenericDAO<User> {
 	            user.setPhone_number(rs.getString("phone_number"));
 	            user.setAddress(rs.getString("address"));
 	            user.setRegistration_date(rs.getString("registration_date"));
-	            user.setHash(rs.getString("hash"));
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
-	    } 
+	    } finally {
+	        try {
+	            if (rs != null) {
+	                rs.close();
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
 	    return user;
 	}
-	@Override
-	public User getById(int id) {
-        User user = null;
-        ResultSet rs = null;
-        try {
-            String[] columns = {"user_id", "username", "email", "password", "full_name", "phone_number", "address", "registration_date"};
-            String condition = "user_id=" + id;
-            rs = select("user", columns, condition);
-            if (rs.next()) {
-                user = new User();
-                user.setUser_id(rs.getInt("user_id"));
-                user.setUsername(rs.getString("username"));
-                user.setEmail(rs.getString("email"));
-                user.setPassword(rs.getString("password"));
-                user.setFullName(rs.getString("full_name"));
-                user.setPhone_number(rs.getString("phone_number"));
-                user.setAddress(rs.getString("address"));
-                user.setRegistration_date(rs.getString("registration_date"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return user;
-    }
+
 
 	  @Override
 	    public boolean update(User user) {
@@ -113,36 +120,39 @@ public class UserDAO extends DatabaseDAO implements GenericDAO<User> {
 	        return update("user", columns, values, condition);
 	    }
 
-    public boolean isExistAccount(String email, String password) {
-        boolean flag = false;
-        ResultSet rs = null;
-        try {
-            String[] columns = {"user_id"};
-            String condition = "email='" + email + "' AND password='" + password + "'";
-            rs = select("user", columns, condition);
-            if (rs.next()) {
-                flag = true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return flag;
-    }
+	  public boolean isExistAccount(String email, String password) {
+		    boolean flag = false;
+		    ResultSet rs = null;
+		    try {
+		        String[] columns = {"user_id"};
+		        String condition = "email=? AND password=?";
+		        Object[] values = {email, password};
+		        rs = select("user", columns, condition, values);
+		        if (rs.next()) {
+		            flag = true;
+		        }
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    } finally {
+		        try {
+		            if (rs != null) {
+		                rs.close();
+		            }
+		        } catch (SQLException e) {
+		            e.printStackTrace();
+		        }
+		    }
+		    return flag;
+		}
+
     public boolean isEmailExist(String email) {
         boolean flag = false;
         ResultSet rs = null;
         try {
             String[] columns = {"user_id"};
             String condition = "email=?";
-            rs = select("user", columns, condition);
+            Object[] values = {email};
+            rs = select("user", columns, condition, values);
             
             if (rs.next()) {
                 flag = true;
@@ -152,6 +162,7 @@ public class UserDAO extends DatabaseDAO implements GenericDAO<User> {
         } 
         return flag;
     }
+
     @Override
     public boolean delete(int userId) {
         String condition = "user_id=" + userId;

@@ -85,7 +85,7 @@ public class DatabaseDAO {
         return success;
     }
 
-    public ResultSet select(String tableName, String[] columns, String condition) {
+    public ResultSet select(String tableName, String[] columns, String condition, Object[] values) {
         ResultSet rs = null;
         try {
             StringBuilder sql = new StringBuilder("SELECT ");
@@ -100,13 +100,33 @@ public class DatabaseDAO {
                 sql.append(" WHERE ").append(condition);
             }
             PreparedStatement pst = conn.prepareStatement(sql.toString());
+            if (values != null) {
+                for (int i = 0; i < values.length; i++) {
+                    pst.setObject(i + 1, values[i]);
+                }
+            }
             rs = pst.executeQuery(); 
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return rs;
     }
+    public ResultSet executeQuery(String sql, Object[] params) {
+        ResultSet rs = null;
+        try {
+            PreparedStatement pst = conn.prepareStatement(sql);
 
+            if (params != null) {
+                for (int i = 0; i < params.length; i++) {
+                    pst.setObject(i + 1, params[i]);
+                }
+            }
+            rs = pst.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
     public void closeConnection() {
         try {
             if (conn != null && !conn.isClosed()) {
